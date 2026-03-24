@@ -232,11 +232,16 @@ public struct Socket: Sendable, Hashable {
             Socket.connect(file.rawValue, addr, size)
         }
         guard result >= 0 || errno == EISCONN else {
+            #if canImport(WinSDK)
+            if errno == EINPROGRESS || errno == EWOULDBLOCK || WSAGetLastError() == WSAEWOULDBLOCK {
+                throw SocketError.blocked
+            }
+            #else
             if errno == EINPROGRESS || errno == EWOULDBLOCK {
                 throw SocketError.blocked
-            } else {
-                throw SocketError.makeFailed("Connect")
             }
+            #if
+            throw SocketError.makeFailed("Connect")
         }
     }
 
