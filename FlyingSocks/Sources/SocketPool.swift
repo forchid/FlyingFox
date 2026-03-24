@@ -62,6 +62,12 @@ public struct EventNotification: Equatable, Sendable {
     public var file: Socket.FileDescriptor
     public var events: Socket.Events
     public var errors: Set<Error>
+    
+    public init(file: Socket.FileDescriptor, events: Socket.Events, errors: Set<Error> = []) {
+        self.file = file
+        self.events = events
+        self.errors = errors
+    }
 
     public enum Error: Sendable {
         case endOfFile
