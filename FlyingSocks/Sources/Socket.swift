@@ -233,8 +233,12 @@ public struct Socket: Sendable, Hashable {
         }
         guard result >= 0 || errno == EISCONN else {
             #if canImport(WinSDK)
-            if errno == EINPROGRESS || errno == EWOULDBLOCK || WSAGetLastError() == WSAEWOULDBLOCK {
+            let wsaLastError = WSAGetLastError()
+            if errno == EINPROGRESS || errno == EWOULDBLOCK || wsaLastError == WSAEWOULDBLOCK {
                 throw SocketError.blocked
+            }
+            if wsaLastError == WSAEALREADY {
+                return
             }
             #else
             if errno == EINPROGRESS || errno == EWOULDBLOCK {
