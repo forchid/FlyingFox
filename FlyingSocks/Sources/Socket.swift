@@ -240,7 +240,7 @@ public struct Socket: Sendable, Hashable {
             if errno == EINPROGRESS || errno == EWOULDBLOCK {
                 throw SocketError.blocked
             }
-            #if
+            #endif
             throw SocketError.makeFailed("Connect")
         }
     }
